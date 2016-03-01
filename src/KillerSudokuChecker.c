@@ -6,29 +6,39 @@
 
 void usage();
 FILE* attemptOpen(char* filename);
-void checkSolFile(FILE* solFile, char* filename);
 
 int main(int argc, char *argv[]) {
-	if (argc != 3) usage();
+	if (argc != 2 && argc != 3) usage();
 
 	// create a KSData struct instance to hold info about the
 	// puzzle
 	KSData ksData;
-
-	// attempts to treat args as filenames and opens
 	FILE* gridFile = attemptOpen(argv[1]);
-	FILE* solFile = attemptOpen(argv[2]);
 
 	if (parseGridFile(gridFile, argv[1], &ksData) < 0) {
-		printf("---INVALIDSYNTAX---\n");
+		printf("---Program terminated due to error in grid file---\n");
 		return(-1);
 	} else
-		printf("Syntax valid...\n");
-	//checkSolFile(solFile, argv[2]);
+		printf("Grid file syntax valid...\n");
+
+	if (argc == 3) {
+		FILE* solFile = attemptOpen(argv[2]);
+		if (parseSolFile(solFile, argv[2], &ksData) < 0) {
+			printf("---Program terminated due to error in solution file---\n");
+			return(-1);
+		} else
+			printf("Solution file syntax valid...\n");
+	}
+
+	if (checkInvalidSol(&ksData) < 0) {
+		printf("INVALIDSOL: the supplied solution is not valid\n"
+				"---Program terminated due to invalid solution file---\n");
+		return (-1);
+	}
 }
 
 void usage() {
-	printf("usage: KillerSudokuChecker [killer sudoku file] [solution file]\n");
+	printf("usage: KillerSudokuChecker killer_sudoku_file [solution_file]\n");
 	exit(EXIT_FAILURE);
 }
 

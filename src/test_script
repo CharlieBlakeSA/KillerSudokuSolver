@@ -1,8 +1,17 @@
 #!/bin/bash
-TEST=../Sudokus/test
 
-for f in $TEST/*
+printf "[TESTING GRID FILES]\n"
+
+for f in ../Sudokus/gridTest/*
 do
     printf "\nFILE: $f\n"
-    ./KillerSudokuChecker $f $TEST/empty.ks
+    ./KillerSudokuChecker $f
+done
+
+printf "\n[TESTING SOLUTION FILES]\n"
+
+for f in ../Sudokus/solTest/*
+do
+    printf "\nFILE: $f\n"
+    ./KillerSudokuChecker ../Sudokus/2by2example.ks $f
 done

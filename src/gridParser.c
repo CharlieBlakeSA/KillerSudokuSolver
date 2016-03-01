@@ -118,7 +118,7 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 			// check off the cell we're currently looking at and add the current
 			// cage to our data struct. If we've already seen the cell, send an error
 			if (cellCheck[x-1][y-1]) {
-				printf("Error: in line %d. A cage already covers cell "
+				printf("INVALIDPROBLEM: in line %d. A cage already covers cell "
 						"[%d,%d]\n", lineCount, x, y);
 				return(-1);
 			}
@@ -134,18 +134,18 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 	for (int i = 0; i < gridLength; i++) {
 		for (int j = 0; j < gridLength; j++) {
 			if (!cellCheck[i][j]) {
-				printf("Error: cage in position [%d,%d] is not covered\n", i+1, j+1);
+				printf("INVALIDPROBLEM: cage in position [%d,%d] is not covered\n", i+1, j+1);
 				return(-1);
 			}
 		}
 	}
 
 	if (totalCageSizes != numberOfCells) {
-		printf("Error: cages do not cover correct number of squares\n");
+		printf("INVALIDPROBLEM: cages do not cover correct number of squares\n");
 		return(-1);
 	}
 	else if (totalCageSum != sumOfCageSums) {
-		printf("Error: cage sums do not add to correct value\n");
+		printf("INVALIDPROBLEM: cage sums do not add to correct value\n");
 		return(-1);
 	}
 

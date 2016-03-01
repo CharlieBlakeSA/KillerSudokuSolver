@@ -24,6 +24,7 @@ typedef struct {
 } KSData;
 
 int parseGridFile(FILE* gridFile, char* filename, KSData* ksData);
+int parseSolFile(FILE* solFile, char* filename, KSData* ksData);
 void setupGridDimensions(int boxLength, int gridLength, int numberOfCells, KSData* ksData);
 void setupCages(int numberOfCages, KSData* ksData);
 Cage* createCage(int size, int sum, int cageCount, KSData* ksData);
