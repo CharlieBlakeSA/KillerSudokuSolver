@@ -1,0 +1,8 @@
+#!/bin/bash
+TEST=../Sudokus/test
+
+for f in $TEST/*
+do
+    printf "\nFILE: $f\n"
+    ./KillerSudokuChecker $f $TEST/empty.ks
+done

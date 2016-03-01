@@ -6,17 +6,17 @@ ODIR=obj
 
 LIBS=-lm
 
-#_DEPS = 
-#DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+_DEPS = ../headers
+DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ = KSChecker.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
-$(ODIR)/%.o: %.c #$(DEPS)
+$(ODIR)/%.o: %.c $(DEPS)
 		$(CC) -c -o $@ $< $(CFLAGS)
 
-KSChecker: $(OBJ)
+KillerSudokuChecker: $(OBJ)
 		gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
