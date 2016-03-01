@@ -6,10 +6,10 @@ ODIR=obj
 
 LIBS=-lm
 
-_DEPS = ../headers
+_DEPS = KillerSudokuChecker.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = KSChecker.o
+_OBJ = KillerSudokuChecker.o gridParser.o ksDataSetup.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 

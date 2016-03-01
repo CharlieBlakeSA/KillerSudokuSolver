@@ -1,6 +1,7 @@
 #include "../headers/KillerSudokuChecker.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 
 void usage();
@@ -18,7 +19,11 @@ int main(int argc, char *argv[]) {
 	FILE* gridFile = attemptOpen(argv[1]);
 	FILE* solFile = attemptOpen(argv[2]);
 
-	parseGridFile(gridFile, argv[1], &ksData);
+	if (parseGridFile(gridFile, argv[1], &ksData) < 0) {
+		printf("---INVALIDSYNTAX---\n");
+		return(-1);
+	} else
+		printf("Syntax valid...\n");
 	//checkSolFile(solFile, argv[2]);
 }
 

@@ -1,3 +1,4 @@
+#include "../headers/KillerSudokuChecker.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,9 +6,7 @@
 #include <limits.h>
 #include <math.h>
 
-void createCage(int cageSize, int cageSum, KSData* ksData);
-
-void parseGridFile(FILE* f, char* name, KSData* ksData) {
+int parseGridFile(FILE* f, char* name, KSData* ksData) {
 	char line[200];
 	const char delim[2] = ",";
 	char* token;
@@ -15,7 +14,7 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 
 	if (fgets(line, 200, f) == NULL) {
 		printf("Error: \"%s\" empty\n", name);
-		exit(EXIT_FAILURE);
+		return(-1);
 	}
 
 	// checks the first line (size of a box, number of cages)
@@ -23,29 +22,27 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 	int boxLength = strtol(token, &restOfToken, 10);
 	int gridLength = pow(boxLength, 2);
 	int numberOfCells = pow(gridLength, 2);
-	ksData->boxLength = boxLength;
-	ksData->gridLength = gridLength;
-	ksData->numberOfCells = numberOfCells;
+	setupGridDimensions(boxLength, gridLength, numberOfCells, ksData);
 
 	if (boxLength < 2 || boxLength == (int) LONG_MAX) {
 		printf("Error: value in first line of \"%s\". "
 				"Box length must be a number > 1\n", name);
-		exit(EXIT_FAILURE);
+		return(-1);
 	}
 
 	token = strtok(NULL, delim);
 	int numberOfCages = strtol(token, &restOfToken, 10);
-	ksData->numberOfCages = numberOfCages;
+	setupCages(numberOfCages, ksData);
 
-	if (numberOfCages < 1 || numberOfCages > gridLength) {
+	if (numberOfCages < 1 || numberOfCages > numberOfCells) {
 		printf("Error: value in first line of \"%s\". "
 				"Number of cages must be a number > 1\n", name);
-		exit(EXIT_FAILURE);
+		return(-1);
 	}
 
 	else if (*restOfToken != '\n' || strtok(NULL, delim) != NULL) {
 		printf("Error: first line contains too many values\n");
-		exit(EXIT_FAILURE);
+		return(-1);
 	}
 
 	// check each subsequent line
@@ -69,7 +66,7 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 		// send an error
 		if (lineCount - 1 > numberOfCages) {
 			printf("Error: mismatched number of cages specified\n");
-			exit(EXIT_FAILURE);
+			return(-1);
 		}
 
 		// gets the cage size
@@ -78,7 +75,7 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 		if (cageSize < 1 || cageSize > numberOfCells
 				|| token == NULL || *restOfToken != '\0') {
 			printf("Error: invalid cage size in line %d\n", lineCount);
-			exit(EXIT_FAILURE);
+			return(-1);
 		}
 		totalCageSizes += cageSize;
 
@@ -88,13 +85,12 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 		if (cageSum < 1 || cageSum > sumOfCageSums
 				|| token == NULL || *restOfToken != '\0') {
 			printf("Error: invalid cage sum in line %d\n", lineCount);
-			exit(EXIT_FAILURE);
+			return(-1);
 		}
 		totalCageSum += cageSum;
 
 		// create a corresponding cage object in the data struct
-		createCage(cageSize, cageSum, ksData);
-
+		Cage* currentCage = createCage(cageSize, cageSum, lineCount-2, ksData);
 
 		// reads the cell co-ordinates
 		for (int i = 0; i < cageSize; i++) {
@@ -105,7 +101,7 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 			if (x < 1 || x > gridLength || xToken == NULL || *restOfToken != '\0') {
 
 				printf("Error: invalid cell co-ordinates in line %d\n", lineCount);
-				exit(EXIT_FAILURE);
+				return(-1);
 			}
 
 			// y co-ordinate
@@ -116,7 +112,7 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 					!(*restOfToken == '\0' || (i==cageSize-1 && *restOfToken == '\n'))) {
 
 				printf("Error: invalid cell co-ordinates in line %d\n", lineCount);
-				exit(EXIT_FAILURE);
+				return(-1);
 			}
 
 			// check off the cell we're currently looking at and add the current
@@ -124,10 +120,11 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 			if (cellCheck[x-1][y-1]) {
 				printf("Error: in line %d. A cage already covers cell "
 						"[%d,%d]\n", lineCount, x, y);
-				exit(EXIT_FAILURE);
+				return(-1);
 			}
 			else {
 				cellCheck[x-1][y-1] = true;
+				createCell(x, y, i, currentCage, ksData);
 			}
 		}
 		lineCount++;
@@ -138,21 +135,19 @@ void parseGridFile(FILE* f, char* name, KSData* ksData) {
 		for (int j = 0; j < gridLength; j++) {
 			if (!cellCheck[i][j]) {
 				printf("Error: cage in position [%d,%d] is not covered\n", i+1, j+1);
-				exit(EXIT_FAILURE);
+				return(-1);
 			}
 		}
 	}
 
 	if (totalCageSizes != numberOfCells) {
 		printf("Error: cages do not cover correct number of squares\n");
-		exit(EXIT_FAILURE);
+		return(-1);
 	}
 	else if (totalCageSum != sumOfCageSums) {
 		printf("Error: cage sums do not add to correct value\n");
-		exit(EXIT_FAILURE);
+		return(-1);
 	}
-}
 
-void createCage(int cageSize, int cageSum, KSData* ksData) {
-	//
+	return 0;
 }
