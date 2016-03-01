@@ -57,7 +57,7 @@ void checkKSFile(FILE* f, char* name) {
 		printf("Error: value in first line of \"%s\" must be a number > 1\n", name);
 		exit(EXIT_FAILURE);
 	}
-	else if (restOfToken != NULL || strtok(NULL, delim) != NULL) {
+	else if (*restOfToken != '\n' || strtok(NULL, delim) != NULL) {
 		printf("Error: first line contains too many values\n");
 		exit(EXIT_FAILURE);
 	}
@@ -71,9 +71,9 @@ void checkKSFile(FILE* f, char* name) {
 
 	// a 2D boolean array representing each square. We first
 	// zero it out then use it to check off each cell we see
-	bool cellCheck[boxLength][boxLength];
-	for (int i = 0; i < boxLength; i++)
-		for (int j = 0; j < boxLength; j++)
+	bool cellCheck[gridLength][gridLength];
+	for (int i = 0; i < gridLength; i++)
+		for (int j = 0; j < gridLength; j++)
 			cellCheck[i][j] = false;
 
 	// iterate through each line in the file
@@ -81,7 +81,8 @@ void checkKSFile(FILE* f, char* name) {
 		// gets the cage size
 		token = strtok(line, delim);
 		int cageSize = strtol(token, &restOfToken, 10);
-		if (cageSize < 1 || cageSize > numberOfCells || restOfToken != NULL) {
+		if (cageSize < 1 || cageSize > numberOfCells
+				|| token == NULL || *restOfToken != '\0') {
 			printf("Error: invalid cage size in line %d\n", lineCount);
 			exit(EXIT_FAILURE);
 		}
@@ -90,18 +91,49 @@ void checkKSFile(FILE* f, char* name) {
 		// gets the cage sum
 		token = strtok(NULL, delim);
 		int cageSum = strtol(token, &restOfToken, 10);
-		if (cageSum < 1 || cageSum > sumOfCageSums || restOfToken != NULL) {
+		if (cageSum < 1 || cageSum > sumOfCageSums
+				|| token == NULL || *restOfToken != '\0') {
 			printf("Error: invalid cage sum in line %d\n", lineCount);
 			exit(EXIT_FAILURE);
 		}
 		totalCageSum += cageSum;
 
+		// read the cell co-ordinates
+		for (int i = 0; i < cageSize; i++) {
+			char* xToken = strtok(NULL, "."); // MAYBE IF THIS IS NULL RETURN
+			int x = strtol(xToken, &restOfToken, 10);
+			if (x < 1 || x > gridLength
+					  || xToken == NULL) {
+				printf("Error: invalid cell co-ordinates in line %d\n", lineCount);
+				exit(EXIT_FAILURE);
+			} else if (*restOfToken != '\0') {
+				printf("Error: invalid co-ordinate syntax in line %d\n", lineCount);
+				exit(EXIT_FAILURE);
+			}
+
+			char* yToken = strtok(NULL, delim);
+			int y = strtol(yToken, &restOfToken, 10);
+			if (y < 1 || y > gridLength || yToken == NULL) {
+				printf("Error: invalid cell co-ordinates in line %d\n", lineCount);
+				exit(EXIT_FAILURE);
+			} else if (!(*restOfToken == '\0' ||
+					(i==cageSize-1 && *restOfToken == '\n'))) {
+				printf("Error: invalid co-ordinate syntax in line %d\n", lineCount);
+				exit(EXIT_FAILURE);
+			}
+
+			if (cellCheck[x-1][y-1]) {
+				printf("Error: in line %d. A cage already covers cell "
+						"[%d,%d]\n", lineCount, x, y);
+				exit(EXIT_FAILURE);
+			} else
+				cellCheck[x-1][y-1] = true;
+		}
 	}
 
 	// check if there are any unfilled cells
-	int unfilled = false;
-	for (int i = 0; i < boxLength; i++) {
-		for (int j = 0; j < boxLength; j++) {
+	for (int i = 0; i < gridLength; i++) {
+		for (int j = 0; j < gridLength; j++) {
 			if (!cellCheck[i][j]) {
 				printf("Error: cage in position [%d,%d] is not covered\n", i+1, j+1);
 				exit(EXIT_FAILURE);
@@ -109,7 +141,7 @@ void checkKSFile(FILE* f, char* name) {
 		}
 	}
 
-	if (totalCageSizes != sumOfCageSizes) {
+	if (totalCageSizes != numberOfCells) {
 		printf("Error: cages do not cover correct number of squares\n");
 		exit(EXIT_FAILURE);
 	}
