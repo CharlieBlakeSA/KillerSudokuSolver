@@ -2,7 +2,7 @@
 
 printf "\n[TESTING GRID FILES]\n"
 
-for f in ../Sudokus/gridTest/*
+for f in Sudokus/gridTest/*
 do
     printf "\nFILE: $f\n"
     ./KillerSudokuChecker $f
@@ -10,10 +10,10 @@ done
 
 printf "\n[TESTING SOLUTION FILES]\n"
 
-for f in ../Sudokus/solTest/*
+for f in Sudokus/solTest/*
 do
     printf "\nFILE: $f\n"
-    ./KillerSudokuChecker ../Sudokus/2by2example.ks $f
+    ./KillerSudokuChecker Sudokus/2by2example.ks $f
 done
 
 printf "\n"
