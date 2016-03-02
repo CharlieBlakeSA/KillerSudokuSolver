@@ -13,7 +13,7 @@ CODIR = $(CHECKERDIR)/$(_ODIR)
 
 LIBS=-lm
 
-_DEPS = KillerSudokuChecker.h
+_DEPS = KillerSudokuChecker.h SudokuStates.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _CHECKOBJ = KillerSudokuChecker.o gridParser.o ksDataSetup.o solParser.o checkInvalidSol.o checkComplete.o assessInputFiles.o

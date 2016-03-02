@@ -1,3 +1,7 @@
+#ifndef KS_CHECK_H
+#define KS_CHECK_H
+
+#include "../headers/SudokuStates.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -23,12 +27,14 @@ typedef struct {
 	Cell*** grid;
 } KSData;
 
-int assessInputFiles(int argc, char *argv[]);
-int parseGridFile(FILE* gridFile, KSData* ksData);
-int parseSolFile(FILE* solFile, KSData* ksData);
+KSState assessInputFiles(int argc, char *argv[], KSData* ksData);
+KSState parseGridFile(FILE* gridFile, KSData* ksData);
+KSState parseSolFile(FILE* solFile, KSData* ksData);
 void setupGridDimensions(int boxLength, int gridLength, int numberOfCells, KSData* ksData);
 void setupCages(int numberOfCages, KSData* ksData);
 Cage* createCage(int size, int sum, int cageCount, KSData* ksData);
 void createCell(int x, int y, int cellCount, Cage* cage, KSData* ksData);
-int checkInvalidSol(KSData* ksData);
+KSState checkInvalidSol(KSData* ksData);
 bool checkComplete(KSData* ksData);
+
+#endif

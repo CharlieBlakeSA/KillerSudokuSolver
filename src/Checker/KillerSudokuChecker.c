@@ -1,5 +1,11 @@
 #include "../headers/KillerSudokuChecker.h"
+#include "../headers/SudokuStates.h"
 
 int main(int argc, char *argv[]) {
-	assessInputFiles(argc, argv);
+	// create a KSData struct instance to hold info
+	// about the puzzle
+	KSData ksDataStruct;
+
+	KSState s = assessInputFiles(argc, argv, &ksDataStruct);
+	printf("---%s---\n", stringFromState(s));
 }

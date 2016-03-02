@@ -1,4 +1,5 @@
 #include "../headers/KillerSudokuChecker.h"
+#include "../headers/SudokuStates.h"
 #include <stdbool.h>
 
 int checkRowsColumns(KSData* ksData);
@@ -6,16 +7,25 @@ int checkBoxes(KSData* ksData);
 int checkCage(KSData* ksData);
 int checkCageSum(KSData* ksData);
 
-int checkInvalidSol(KSData* ksData) {
-	if (checkRowsColumns(ksData) == -1)
-		return -2;
-	if (checkBoxes(ksData) == -1)
-		return -3;
-	if (checkCage(ksData) == -1)
-		return -4;
-	if (checkCageSum( ksData) == -1)
-		return -5;
-	return 0;
+KSState checkInvalidSol(KSData* ksData) {
+	if (checkRowsColumns(ksData) == -1) {
+		printf("Error: row/column contains duplicate values in solution file\n");
+		return INVALIDSOL;
+	}
+	else if (checkBoxes(ksData) == -1) {
+		printf("Error: box contains duplicate values in solution file\n");
+		return INVALIDSOL;
+	}
+	else if (checkCage(ksData) == -1) {
+		printf("Error: cage contains duplicate values in solution file\n");
+		return INVALIDSOL;
+	}
+	else if (checkCageSum(ksData) == -1) {
+		printf("Error: incorrect cage sum in solution file\n");
+		return INVALIDSOL;
+	}
+	else
+		return VALID;
 }
 
 int checkRowsColumns(KSData* ksData) {

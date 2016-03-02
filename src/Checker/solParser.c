@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <math.h>
 
-int parseSolFile(FILE* f, KSData* ksData) {
+KSState parseSolFile(FILE* f, KSData* ksData) {
 	char line[200];
 	const char delim[2] = ",";
 	char* token;
@@ -19,7 +19,7 @@ int parseSolFile(FILE* f, KSData* ksData) {
 		// if we have too many rows print an error
 		if (row >= ksData->gridLength) {
 			printf("Error: too many rows in solution file\n");
-			return(-1);
+			return INVALIDSYNTAX;
 		}
 
 		token = strtok(line, delim);
@@ -33,7 +33,7 @@ int parseSolFile(FILE* f, KSData* ksData) {
 				|| token == NULL || (*restOfToken != '\0' && *restOfToken != '\n')) {
 				printf("Error: invalid value in [%d,%d] of solution file\n",
 						column + 1, ksData->gridLength - row);
-				return(-1);
+				return INVALIDSYNTAX;
 			}
 			else {
 				Cell* currentCell = ksData->grid[column][ksData->gridLength - row - 1];
@@ -42,5 +42,5 @@ int parseSolFile(FILE* f, KSData* ksData) {
 			}
 		}
 	}
-	return 0;
+	return VALID;
 }

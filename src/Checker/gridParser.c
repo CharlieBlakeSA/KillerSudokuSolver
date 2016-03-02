@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <math.h>
 
-int parseGridFile(FILE* f, KSData* ksData) {
+KSState parseGridFile(FILE* f, KSData* ksData) {
 	char line[200];
 	const char delim[2] = ",";
 	char* token;
@@ -14,7 +14,7 @@ int parseGridFile(FILE* f, KSData* ksData) {
 
 	if (fgets(line, 200, f) == NULL) {
 		printf("Error: grid file empty\n");
-		return(-1);
+		return INVALIDSYNTAX;
 	}
 
 	// checks the first line (size of a box, number of cages)
@@ -27,7 +27,7 @@ int parseGridFile(FILE* f, KSData* ksData) {
 	if (boxLength < 2 || boxLength == (int) LONG_MAX) {
 		printf("Error: value in first line of grid file. "
 				"Box length must be a number > 1\n");
-		return(-1);
+		return INVALIDSYNTAX;
 	}
 
 	token = strtok(NULL, delim);
@@ -37,12 +37,12 @@ int parseGridFile(FILE* f, KSData* ksData) {
 	if (numberOfCages < 1 || numberOfCages > numberOfCells) {
 		printf("Error: value in first line of grid file. "
 				"Number of cages must be a number > 1\n");
-		return(-1);
+		return INVALIDSYNTAX;
 	}
 
 	else if (*restOfToken != '\n' || strtok(NULL, delim) != NULL) {
 		printf("Error: first line in grid file contains too many values\n");
-		return(-1);
+		return INVALIDSYNTAX;
 	}
 
 	// check each subsequent line
@@ -66,7 +66,7 @@ int parseGridFile(FILE* f, KSData* ksData) {
 		// send an error
 		if (lineCount - 1 > numberOfCages) {
 			printf("Error: mismatched number of cages specified in grid file\n");
-			return(-1);
+			return INVALIDSYNTAX;
 		}
 
 		// gets the cage size
@@ -75,7 +75,7 @@ int parseGridFile(FILE* f, KSData* ksData) {
 		if (cageSize < 1 || cageSize > numberOfCells
 				|| token == NULL || *restOfToken != '\0') {
 			printf("Error: invalid cage size in line %d of grid file\n", lineCount);
-			return(-1);
+			return INVALIDSYNTAX;
 		}
 		totalCageSizes += cageSize;
 
@@ -85,7 +85,7 @@ int parseGridFile(FILE* f, KSData* ksData) {
 		if (cageSum < 1 || cageSum > sumOfCageSums
 				|| token == NULL || *restOfToken != '\0') {
 			printf("Error: invalid cage sum in line %d of grid file\n", lineCount);
-			return(-1);
+			return INVALIDSYNTAX;
 		}
 		totalCageSum += cageSum;
 
@@ -101,7 +101,7 @@ int parseGridFile(FILE* f, KSData* ksData) {
 			if (x < 1 || x > gridLength || xToken == NULL || *restOfToken != '\0') {
 
 				printf("Error: invalid cell co-ordinates in line %d of grid file\n", lineCount);
-				return(-1);
+				return INVALIDSYNTAX;
 			}
 
 			// y co-ordinate
@@ -112,15 +112,15 @@ int parseGridFile(FILE* f, KSData* ksData) {
 					!(*restOfToken == '\0' || (i==cageSize-1 && *restOfToken == '\n'))) {
 
 				printf("Error: invalid cell co-ordinates in line %d of grid file\n", lineCount);
-				return(-1);
+				return INVALIDSYNTAX;
 			}
 
 			// check off the cell we're currently looking at and add the current
 			// cage to our data struct. If we've already seen the cell, send an error
 			if (cellCheck[x-1][y-1]) {
-				printf("INVALIDPROBLEM: in line %d of grid file. A cage already covers cell "
+				printf("Error: in line %d of grid file. A cage already covers cell "
 						"[%d,%d]\n", lineCount, x, y);
-				return(-1);
+				return INVALIDPROBLEM;
 			}
 			else {
 				cellCheck[x-1][y-1] = true;
@@ -134,20 +134,20 @@ int parseGridFile(FILE* f, KSData* ksData) {
 	for (int i = 0; i < gridLength; i++) {
 		for (int j = 0; j < gridLength; j++) {
 			if (!cellCheck[i][j]) {
-				printf("INVALIDPROBLEM: cage in position [%d,%d] of grid file is not covered\n", i+1, j+1);
-				return(-1);
+				printf("Error: cage in position [%d,%d] of grid file is not covered\n", i+1, j+1);
+				return INVALIDPROBLEM;
 			}
 		}
 	}
 
 	if (totalCageSizes != numberOfCells) {
-		printf("INVALIDPROBLEM: cages in grid file do not cover correct number of squares\n");
-		return(-1);
+		printf("Error: cages in grid file do not cover correct number of squares\n");
+		return INVALIDPROBLEM;
 	}
 	else if (totalCageSum != sumOfCageSums) {
-		printf("INVALIDPROBLEM: cage sums in grid file do not add to correct value\n");
-		return(-1);
+		printf("Error: cage sums in grid file do not add to correct value\n");
+		return INVALIDPROBLEM;
 	}
 
-	return 0;
+	return VALID;
 }
