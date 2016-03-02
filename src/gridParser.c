@@ -6,14 +6,14 @@
 #include <limits.h>
 #include <math.h>
 
-int parseGridFile(FILE* f, char* name, KSData* ksData) {
+int parseGridFile(FILE* f, KSData* ksData) {
 	char line[200];
 	const char delim[2] = ",";
 	char* token;
 	char* restOfToken;
 
 	if (fgets(line, 200, f) == NULL) {
-		printf("Error: \"%s\" empty\n", name);
+		printf("Error: grid file empty\n");
 		return(-1);
 	}
 
@@ -25,8 +25,8 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 	setupGridDimensions(boxLength, gridLength, numberOfCells, ksData);
 
 	if (boxLength < 2 || boxLength == (int) LONG_MAX) {
-		printf("Error: value in first line of \"%s\". "
-				"Box length must be a number > 1\n", name);
+		printf("Error: value in first line of grid file. "
+				"Box length must be a number > 1\n");
 		return(-1);
 	}
 
@@ -35,13 +35,13 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 	setupCages(numberOfCages, ksData);
 
 	if (numberOfCages < 1 || numberOfCages > numberOfCells) {
-		printf("Error: value in first line of \"%s\". "
-				"Number of cages must be a number > 1\n", name);
+		printf("Error: value in first line of grid file. "
+				"Number of cages must be a number > 1\n");
 		return(-1);
 	}
 
 	else if (*restOfToken != '\n' || strtok(NULL, delim) != NULL) {
-		printf("Error: first line contains too many values\n");
+		printf("Error: first line in grid file contains too many values\n");
 		return(-1);
 	}
 
@@ -65,7 +65,7 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 		// if we have more cages than specified in the first line,
 		// send an error
 		if (lineCount - 1 > numberOfCages) {
-			printf("Error: mismatched number of cages specified\n");
+			printf("Error: mismatched number of cages specified in grid file\n");
 			return(-1);
 		}
 
@@ -74,7 +74,7 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 		int cageSize = strtol(token, &restOfToken, 10);
 		if (cageSize < 1 || cageSize > numberOfCells
 				|| token == NULL || *restOfToken != '\0') {
-			printf("Error: invalid cage size in line %d\n", lineCount);
+			printf("Error: invalid cage size in line %d of grid file\n", lineCount);
 			return(-1);
 		}
 		totalCageSizes += cageSize;
@@ -84,7 +84,7 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 		int cageSum = strtol(token, &restOfToken, 10);
 		if (cageSum < 1 || cageSum > sumOfCageSums
 				|| token == NULL || *restOfToken != '\0') {
-			printf("Error: invalid cage sum in line %d\n", lineCount);
+			printf("Error: invalid cage sum in line %d of grid file\n", lineCount);
 			return(-1);
 		}
 		totalCageSum += cageSum;
@@ -100,7 +100,7 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 
 			if (x < 1 || x > gridLength || xToken == NULL || *restOfToken != '\0') {
 
-				printf("Error: invalid cell co-ordinates in line %d\n", lineCount);
+				printf("Error: invalid cell co-ordinates in line %d of grid file\n", lineCount);
 				return(-1);
 			}
 
@@ -111,14 +111,14 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 			if (y < 1 || y > gridLength || yToken == NULL ||
 					!(*restOfToken == '\0' || (i==cageSize-1 && *restOfToken == '\n'))) {
 
-				printf("Error: invalid cell co-ordinates in line %d\n", lineCount);
+				printf("Error: invalid cell co-ordinates in line %d of grid file\n", lineCount);
 				return(-1);
 			}
 
 			// check off the cell we're currently looking at and add the current
 			// cage to our data struct. If we've already seen the cell, send an error
 			if (cellCheck[x-1][y-1]) {
-				printf("INVALIDPROBLEM: in line %d. A cage already covers cell "
+				printf("INVALIDPROBLEM: in line %d of grid file. A cage already covers cell "
 						"[%d,%d]\n", lineCount, x, y);
 				return(-1);
 			}
@@ -134,18 +134,18 @@ int parseGridFile(FILE* f, char* name, KSData* ksData) {
 	for (int i = 0; i < gridLength; i++) {
 		for (int j = 0; j < gridLength; j++) {
 			if (!cellCheck[i][j]) {
-				printf("INVALIDPROBLEM: cage in position [%d,%d] is not covered\n", i+1, j+1);
+				printf("INVALIDPROBLEM: cage in position [%d,%d] of grid file is not covered\n", i+1, j+1);
 				return(-1);
 			}
 		}
 	}
 
 	if (totalCageSizes != numberOfCells) {
-		printf("INVALIDPROBLEM: cages do not cover correct number of squares\n");
+		printf("INVALIDPROBLEM: cages in grid file do not cover correct number of squares\n");
 		return(-1);
 	}
 	else if (totalCageSum != sumOfCageSums) {
-		printf("INVALIDPROBLEM: cage sums do not add to correct value\n");
+		printf("INVALIDPROBLEM: cage sums in grid file do not add to correct value\n");
 		return(-1);
 	}
 

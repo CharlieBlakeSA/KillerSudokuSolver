@@ -9,7 +9,7 @@ LIBS=-lm
 _DEPS = KillerSudokuChecker.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = KillerSudokuChecker.o gridParser.o ksDataSetup.o solParser.o checkInvalidSol.o
+_OBJ = KillerSudokuChecker.o gridParser.o ksDataSetup.o solParser.o checkInvalidSol.o checkComplete.o assessInputFiles.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 

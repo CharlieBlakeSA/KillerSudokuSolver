@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <math.h>
 
-int parseSolFile(FILE* f, char* name, KSData* ksData) {
+int parseSolFile(FILE* f, KSData* ksData) {
 	char line[200];
 	const char delim[2] = ",";
 	char* token;

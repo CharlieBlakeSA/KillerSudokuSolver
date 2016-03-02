@@ -1,6 +1,6 @@
 #!/bin/bash
 
-printf "[TESTING GRID FILES]\n"
+printf "\n[TESTING GRID FILES]\n"
 
 for f in ../Sudokus/gridTest/*
 do
@@ -15,3 +15,5 @@ do
     printf "\nFILE: $f\n"
     ./KillerSudokuChecker ../Sudokus/2by2example.ks $f
 done
+
+printf "\n"
