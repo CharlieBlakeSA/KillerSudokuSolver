@@ -30,9 +30,24 @@ int main(int argc, char *argv[]) {
 			printf("Solution file syntax valid...\n");
 	}
 
-	if (checkInvalidSol(&ksData) < 0) {
-		printf("INVALIDSOL: the supplied solution is not valid\n"
-				"---Program terminated due to invalid solution file---\n");
+	int r = checkInvalidSol(&ksData);
+	if (r < 0) {
+		printf("INVALIDSOL: ");
+		switch(r) {
+			case -2:
+				printf("row/column contains duplicate values in solution file\n");
+				break;
+			case -3:
+				printf("box contains duplicate values in solution file\n");
+				break;
+			case -4:
+				printf("cage contains duplicate values in solution file\n");
+				break;
+			case -5:
+				printf("incorrect cage sum in solution file\n");
+				break;
+		}
+		printf("---Program terminated due to invalid solution file---\n");
 		return (-1);
 	}
 }

@@ -29,3 +29,4 @@ void setupGridDimensions(int boxLength, int gridLength, int numberOfCells, KSDat
 void setupCages(int numberOfCages, KSData* ksData);
 Cage* createCage(int size, int sum, int cageCount, KSData* ksData);
 void createCell(int x, int y, int cellCount, Cage* cage, KSData* ksData);
+int checkInvalidSol(KSData* ksData);
