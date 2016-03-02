@@ -1,7 +1,7 @@
-#ifndef KS_CHECK_H
-#define KS_CHECK_H
+#ifndef KS_H
+#define KS_H
 
-#include "../headers/SudokuStates.h"
+#include "SudokuStates.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -30,11 +30,15 @@ typedef struct {
 KSState assessInputFiles(int argc, char *argv[], KSData* ksData);
 KSState parseGridFile(FILE* gridFile, KSData* ksData);
 KSState parseSolFile(FILE* solFile, KSData* ksData);
+
 void setupGridDimensions(int boxLength, int gridLength, int numberOfCells, KSData* ksData);
 void setupCages(int numberOfCages, KSData* ksData);
 Cage* createCage(int size, int sum, int cageCount, KSData* ksData);
 void createCell(int x, int y, int cellCount, Cage* cage, KSData* ksData);
+
 KSState checkInvalidSol(KSData* ksData);
 bool checkComplete(KSData* ksData);
+
+void printSudoku(KSData* ksData);
 
 #endif

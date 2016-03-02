@@ -5,26 +5,36 @@ CC = gcc
 CFLAGS = -I$(IDIR) -Wall -Wextra -std=c99 -g
 
 CHECKERDIR = $(SRCDIR)/Checker
-#SOLVERDIR = $(SRCDIR)/Solver
+SOLVERDIR = $(SRCDIR)/Solver
 
 _ODIR = obj
 CODIR = $(CHECKERDIR)/$(_ODIR)
-#SODIR = $(SOLVERDIR)/$(_ODIR)
+SODIR = $(SOLVERDIR)/$(_ODIR)
 
 LIBS=-lm
 
-_DEPS = KillerSudokuChecker.h SudokuStates.h
+_DEPS = KillerSudoku.h SudokuStates.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_CHECKOBJ = KillerSudokuChecker.o gridParser.o ksDataSetup.o solParser.o checkInvalidSol.o checkComplete.o assessInputFiles.o
+_CHECKOBJ = KillerSudokuChecker.o
 CHECKOBJ = $(patsubst %,$(CODIR)/%,$(_CHECKOBJ))
 
+_CHECKOBJ' = gridParser.o ksDataSetup.o solParser.o checkInvalidSol.o checkComplete.o assessInputFiles.o
+CHECKOBJ' = $(patsubst %,$(CODIR)/%,$(_CHECKOBJ'))
+
+_SOLVEOBJ = KillerSudokuSolver.o sudokuOperations.o
+SOLVEOBJ = $(patsubst %,$(SODIR)/%,$(_SOLVEOBJ)) $(CHECKOBJ')
 
 %.o: ../%.c $(DEPS)
 		$(CC) -c -o $@ $< $(CFLAGS)
+		
+all: KillerSudokuChecker KillerSudokuSolver
 
-KillerSudokuChecker: $(CHECKOBJ)
-		gcc -o KillerSudokuChecker $^ $(CFLAGS) $(LIBS)
+KillerSudokuChecker: $(CHECKOBJ) $(CHECKOBJ')
+		gcc -o $@ $^ $(CFLAGS) $(LIBS)
+		
+KillerSudokuSolver: $(SOLVEOBJ)
+		gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
 		rm -f $(CODIR)/*.o *~ core $(INCDIR)/*~

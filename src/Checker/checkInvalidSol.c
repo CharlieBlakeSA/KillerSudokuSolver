@@ -1,4 +1,4 @@
-#include "../headers/KillerSudokuChecker.h"
+#include "../headers/KillerSudoku.h"
 #include "../headers/SudokuStates.h"
 #include <stdbool.h>
 

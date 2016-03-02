@@ -1,4 +1,4 @@
-#include "../headers/KillerSudokuChecker.h"
+#include "../headers/KillerSudoku.h"
 #include <stdbool.h>
 
 bool checkComplete(KSData* ksData) {
