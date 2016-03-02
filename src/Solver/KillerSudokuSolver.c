@@ -1,7 +1,5 @@
 #include "../headers/KillerSudoku.h"
 
-KSState solveSudoku(KSData* ksData);
-
 int main(int argc, char *argv[]) {
 	KSData ksDataStructure;
 
@@ -28,8 +26,4 @@ int main(int argc, char *argv[]) {
 		printf("---%s---\n", stringFromState(s));
 		printf("Sudoku could not be solved. Exiting...\n");
 	}
-}
-
-KSState solveSudoku(KSData* ksData) {
-	return INVALIDPROBLEM;
 }

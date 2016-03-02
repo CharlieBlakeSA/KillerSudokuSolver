@@ -40,5 +40,6 @@ KSState checkInvalidSol(KSData* ksData);
 bool checkComplete(KSData* ksData);
 
 void printSudoku(KSData* ksData);
+KSState solveSudoku(KSData* ksData);
 
 #endif

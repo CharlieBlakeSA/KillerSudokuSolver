@@ -22,7 +22,7 @@ CHECKOBJ = $(patsubst %,$(CODIR)/%,$(_CHECKOBJ))
 _CHECKOBJ' = gridParser.o ksDataSetup.o solParser.o checkInvalidSol.o checkComplete.o assessInputFiles.o
 CHECKOBJ' = $(patsubst %,$(CODIR)/%,$(_CHECKOBJ'))
 
-_SOLVEOBJ = KillerSudokuSolver.o sudokuOperations.o
+_SOLVEOBJ = KillerSudokuSolver.o sudokuOperations.o solveSudoku.o
 SOLVEOBJ = $(patsubst %,$(SODIR)/%,$(_SOLVEOBJ)) $(CHECKOBJ')
 
 %.o: ../%.c $(DEPS)

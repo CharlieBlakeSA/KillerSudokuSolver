@@ -9,19 +9,15 @@ int checkCageSum(KSData* ksData);
 
 KSState checkInvalidSol(KSData* ksData) {
 	if (checkRowsColumns(ksData) == -1) {
-		printf("Error: row/column contains duplicate values in solution file\n");
 		return INVALIDSOL;
 	}
 	else if (checkBoxes(ksData) == -1) {
-		printf("Error: box contains duplicate values in solution file\n");
 		return INVALIDSOL;
 	}
 	else if (checkCage(ksData) == -1) {
-		printf("Error: cage contains duplicate values in solution file\n");
 		return INVALIDSOL;
 	}
 	else if (checkCageSum(ksData) == -1) {
-		printf("Error: incorrect cage sum in solution file\n");
 		return INVALIDSOL;
 	}
 	else
