@@ -97,7 +97,7 @@ int checkCage(KSData* ksData) {
 				cellCount++) {
 			int v = currentCage->cells[cellCount]->value;
 
-			if (v > 0 && v <= ksData->gridLength) {
+			if (v > 0) {
 				if (numbersSeen[v-1])
 					return -1;
 				else
